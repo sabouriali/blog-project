@@ -7,6 +7,9 @@ import { useLocalStorage } from "./hooks/useLocalStorage";
 
 import PostList from "./components/PostList";
 import AddPost from "./components/AddPost";
+import PostLayout from "./components/PostLayout";
+import NotFound from "./components/NotFound";
+import Post from "./components/Post";
 
 export type Tag = {
   id: string;
@@ -18,6 +21,10 @@ export type PostData = {
   markdown: string;
   tags: Tag[];
 };
+
+export type Post = {
+  id: string;
+} & PostData;
 
 export type RawPostData = {
   title: string;
@@ -57,9 +64,11 @@ function App() {
 
   return (
     <Container className="my-4">
-      <h1 className="fw-bold fs-1 my-3">پروژه وبلاگ</h1>
       <Routes>
-        <Route path="/" element={<PostList />} />
+        <Route
+          path="/"
+          element={<PostList posts={postsWithTags} availableTags={tags} />}
+        />
         <Route
           path="/add"
           element={
@@ -70,10 +79,11 @@ function App() {
             />
           }
         />
-        <Route path="/:id">
-          <Route index element={<h2>View Post</h2>} />
+        <Route path="/:id" element={<PostLayout posts={postsWithTags} />}>
+          <Route index element={<Post />} />
           <Route path="edit" element={<h2>Edit Post</h2>} />
         </Route>
+        <Route path="/404-not-found" element={<NotFound />} />
       </Routes>
     </Container>
   );
