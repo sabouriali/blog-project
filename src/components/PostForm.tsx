@@ -10,13 +10,20 @@ type PostFormProps = {
   onSubmit: (data: PostData) => void;
   onAddTag: (tag: Tag) => void;
   availableTags: Tag[];
-};
+} & Partial<PostData>;
 
-function PostForm({ onSubmit, onAddTag, availableTags }: PostFormProps) {
+function PostForm({
+  onSubmit,
+  onAddTag,
+  availableTags,
+  title = "",
+  markdown = "",
+  tags = [],
+}: PostFormProps) {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
 
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
 
   const navigate = useNavigate();
 
@@ -29,7 +36,7 @@ function PostForm({ onSubmit, onAddTag, availableTags }: PostFormProps) {
       tags: selectedTags,
     });
 
-    navigate("/");
+    navigate("..");
   }
 
   return (
@@ -39,7 +46,7 @@ function PostForm({ onSubmit, onAddTag, availableTags }: PostFormProps) {
           <Col>
             <Form.Group controlId="title">
               <Form.Label>عنوان</Form.Label>
-              <Form.Control required ref={titleRef} />
+              <Form.Control required ref={titleRef} defaultValue={title} />
             </Form.Group>
           </Col>
           <Col>
@@ -73,12 +80,18 @@ function PostForm({ onSubmit, onAddTag, availableTags }: PostFormProps) {
         <Row>
           <Form.Group controlId="markdown">
             <Form.Label>پست</Form.Label>
-            <Form.Control required ref={markdownRef} as="textarea" rows={15} />
+            <Form.Control
+              required
+              ref={markdownRef}
+              defaultValue={markdown}
+              as="textarea"
+              rows={15}
+            />
           </Form.Group>
           <Stack
             direction="horizontal"
             gap={2}
-            className=" justify-content-start"
+            className=" justify-content-start mt-4"
           >
             <Button type="submit" variant="light">
               انتشار پست

@@ -10,6 +10,7 @@ import AddPost from "./components/AddPost";
 import PostLayout from "./components/PostLayout";
 import NotFound from "./components/NotFound";
 import Post from "./components/Post";
+import EditPost from "./components/EditPost";
 
 export type Tag = {
   id: string;
@@ -58,8 +59,44 @@ function App() {
     });
   }
 
+  function onUpdatePost(id: string, { tags, ...data }: PostData) {
+    setPosts((prevPosts) => {
+      return prevPosts.map((post) => {
+        if (post.id === id) {
+          return { ...post, ...data, tagIds: tags.map((tag) => tag.id) };
+        } else {
+          return post;
+        }
+      });
+    });
+  }
+
+  function onDeletePost(id: string) {
+    setPosts((prevPosts) => {
+      return prevPosts.filter((post) => post.id !== id);
+    });
+  }
+
   function addTag(tag: Tag) {
     setTags((prevTags) => [...prevTags, tag]);
+  }
+
+  function updateTag(id: string, label: string) {
+    setTags((prevTags) => {
+      return prevTags.map((tag) => {
+        if (tag.id === id) {
+          return { ...tag, label };
+        } else {
+          return tag;
+        }
+      });
+    });
+  }
+
+  function deleteTag(id: string) {
+    setTags((prevTags) => {
+      return prevTags.filter((tag) => tag.id !== id);
+    });
   }
 
   return (
@@ -67,7 +104,14 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<PostList posts={postsWithTags} availableTags={tags} />}
+          element={
+            <PostList
+              posts={postsWithTags}
+              availableTags={tags}
+              onUpdateTag={updateTag}
+              onDeleteTag={deleteTag}
+            />
+          }
         />
         <Route
           path="/add"
@@ -80,8 +124,17 @@ function App() {
           }
         />
         <Route path="/:id" element={<PostLayout posts={postsWithTags} />}>
-          <Route index element={<Post />} />
-          <Route path="edit" element={<h2>Edit Post</h2>} />
+          <Route index element={<Post onDelete={onDeletePost} />} />
+          <Route
+            path="edit"
+            element={
+              <EditPost
+                onSubmit={onUpdatePost}
+                onAddTag={addTag}
+                availableTags={tags}
+              />
+            }
+          />
         </Route>
         <Route path="/404-not-found" element={<NotFound />} />
       </Routes>
