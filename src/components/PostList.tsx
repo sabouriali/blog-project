@@ -29,7 +29,8 @@ function PostList({
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
       return (
-        (title === "" || post.title.toLocaleLowerCase().includes(title)) &&
+        (title === "" ||
+          post.title.toLocaleLowerCase().includes(title.toLocaleLowerCase())) &&
         (selectedTags.length === 0 ||
           selectedTags.every((tag) =>
             post.tags.some((postTag) => postTag.id === tag.id)
